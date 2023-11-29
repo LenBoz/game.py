@@ -1,2 +1,63 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+import random
+
+class Bojovnik:
+    def __init__(self, meno, zivot: int = 100):
+        self.meno = meno
+        self.zivot = zivot
+
+    def utok(self, ciel):
+        utocna_sila_bojovnika = random.uniform(0.2, 30)
+        ciel.zivot -= utocna_sila_bojovnika
+        print(f"{self.meno} útočí na {ciel.meno} a ubral mu {utocna_sila_bojovnika:.0f} životov.")
+
+    def je_zivy(self):
+        return self.zivot > 0
+
+
+class Arena:
+    def __init__(self, bojovnik1, bojovnik2):
+        self.bojovnik1 = bojovnik1
+        self.bojovnik2 = bojovnik2
+
+    def nahodne_bonusove_poskodenie(self):
+        return random.uniform(0.2, 10)
+
+    def simuluj_souboj(self):
+        kolo = 1
+        while self.bojovnik1.je_zivy() and self.bojovnik2.je_zivy():
+            print(f"--- Kolo {kolo} ---")
+            self.bojovnik1.utok(self.bojovnik2)
+            self.bojovnik2.utok(self.bojovnik1)
+
+            # Náhodné bonusové poškodenie
+            bonus_bojovnik1 = self.nahodne_bonusove_poskodenie()
+            bonus_bojovnik2 = self.nahodne_bonusove_poskodenie()
+
+            self.bojovnik1.utok(self.bojovnik2)
+            self.bojovnik2.utok(self.bojovnik1)
+
+            # Aplikovat bonusové poškodenie
+            self.bojovnik1.zivot -= bonus_bojovnik1
+            self.bojovnik2.zivot -= bonus_bojovnik2
+
+            # Výpis s bonusovým poškodením
+            print(f"{self.bojovnik1.meno}: Životy = {self.bojovnik1.zivot: .0f} (-{bonus_bojovnik1:.0f} bonus)")
+            print(f"{self.bojovnik2.meno}: Životy = {self.bojovnik2.zivot: .0f} (-{bonus_bojovnik1:.0f} bonus)")
+            kolo += 1
+
+        # Vyhodnodenie výsledku
+        print("\nVýsledok soúboja:")
+        if self.bojovnik1.je_zivy():
+            print(f"{self.bojovnik1.meno} vyhral! Zostávajúce životy: {self.bojovnik1.zivot: .0f}.")
+        elif self.bojovnik2.je_zivy():
+            print(f"{self.bojovnik2.meno} vyhral! Zostávajúce životy: {self.bojovnik2.zivot: .0f}.")
+        else:
+            print("Remíza, obidvaja bojovníci padli zároveň.")
+
+# Vytvorenie dvoch bojovníkov
+bojovnik1 = Bojovnik(meno=input("Zadajte meno 1. bojovníka: "))
+bojovnik2 = Bojovnik(meno=input("Zadajte meno 2. bojovníka: "))
+
+# Vytvorenie arény a simulace souboje
+arena = Arena(bojovnik1, bojovnik2)
+arena.simuluj_souboj()
