@@ -6,13 +6,78 @@ class Bojovnik:
         self.zivot = zivot
 
     def utok(self, ciel):
-        utocna_sila_bojovnika = random.uniform(0.2, 30)
+        utocna_sila_bojovnika = random.uniform(0.2, 20)
         ciel.zivot -= utocna_sila_bojovnika
         print(f"{self.meno} útočí na {ciel.meno} a ubral mu {utocna_sila_bojovnika:.0f} životov.")
 
     def je_zivy(self):
         return self.zivot > 0
 
+class Rytier(Bojovnik):
+    pass
+class Lukostrelec(Bojovnik):
+    def __init__(self, meno, zivot: int = 80):
+        super().__init__(meno, zivot)
+
+    def utok(self, ciel):
+        utocna_sila_luku = random.uniform(2, 25)
+        ciel.zivot -= utocna_sila_luku
+        print(f"{self.meno} lukostrelec útočí na {ciel.meno} a ubral mu {utocna_sila_luku:.0f} životov.")
+
+class Mag(Bojovnik):
+    def __init__(self, meno, zivot: int = 90):
+        super().__init__(meno, zivot)
+
+    def utok(self, ciel):
+        kouzelna_sila = random.uniform(1, 20)
+        ciel.zivot -= kouzelna_sila
+        print(f"{self.meno} kúzelník útočí na {ciel.meno} a ubral mu {kouzelna_sila:.0f} životov.")
+
+class Elf(Bojovnik):
+     def __init__(self, meno, zivot: int = 120):
+        super().__init__(meno, zivot)
+
+     def utok(self, ciel):
+        utocna_sila_bojovnika = random.uniform(0.5, 18)
+        ciel.zivot -= utocna_sila_bojovnika
+        print(f"{self.meno} elf útočí na {ciel.meno} a ubral mu {utocna_sila_bojovnika:.0f} životov.")
+
+# Vytvorenie dvoch bojovníkov
+def vyber_bojovnika(x):
+    while True:
+        cislo = input(f"Vlož číslo pro výber {x}.bojovnníka (1 - lukostrelec, 2 - mág, 3 - elf, 4 - rytier): ")
+
+        if cislo == "1":
+            meno = input("Zadajt meno lukostrelca: ")
+        elif cislo == "2":
+            meno = input("Zadajt meno mága: ")
+        elif cislo == "3":
+            meno = input("Zadajt meno elfa: ")
+        elif cislo == "4":
+            meno = input("Zadajt meno rytiera: ")
+        else:
+            print("Nerozumiem, treba zadať číslo od 1 do 4!")
+            return vyber_bojovnika(x)  # Volanie funkcie pre nový výber
+
+        if not meno.strip():  # Kontrola, či nieje meno prázdné
+                print("Meno nemôže byť prázdné!")
+                continue
+
+        if cislo == "1":
+            return Lukostrelec(meno=meno)
+        elif cislo == "2":
+            return Mag(meno=meno)
+        elif cislo == "3":
+            return Elf(meno=meno)
+        elif cislo == "4":
+            return Rytier(meno=meno)
+
+bojovnik1 = vyber_bojovnika("1")
+bojovnik2 = vyber_bojovnika("2")
+
+# Výpis mena, triedy a počtu žívotov vybraných bojovníkov
+print(f"Vybraný bojovník 1, meno: {bojovnik1.meno}, trieda: {bojovnik1.__class__.__name__}, životy:{bojovnik1.zivot: .0f}")
+print(f"Vybraný bojovník 2, meno: {bojovnik2.meno}, trieda: {bojovnik2.__class__.__name__}, životy:{bojovnik2.zivot: .0f}")
 
 class Arena:
     def __init__(self, bojovnik1, bojovnik2):
@@ -20,7 +85,7 @@ class Arena:
         self.bojovnik2 = bojovnik2
 
     def nahodne_bonusove_poskodenie(self):
-        return random.uniform(0.2, 10)
+        return random.uniform(0.2, 5)
 
     def simuluj_souboj(self):
         kolo = 1
@@ -36,7 +101,7 @@ class Arena:
             self.bojovnik1.utok(self.bojovnik2)
             self.bojovnik2.utok(self.bojovnik1)
 
-            # Aplikovat bonusové poškodenie
+            # Aplikovať bonusové poškodenie
             self.bojovnik1.zivot -= bonus_bojovnik1
             self.bojovnik2.zivot -= bonus_bojovnik2
 
@@ -48,16 +113,18 @@ class Arena:
         # Vyhodnodenie výsledku
         print("\nVýsledok soúboja:")
         if self.bojovnik1.je_zivy():
-            print(f"{self.bojovnik1.meno} vyhral! Zostávajúce životy: {self.bojovnik1.zivot: .0f}.")
+            print(f"{bojovnik1.__class__.__name__} {self.bojovnik1.meno} vyhral! Zostávajúce životy: {self.bojovnik1.zivot: .0f}.")
         elif self.bojovnik2.je_zivy():
-            print(f"{self.bojovnik2.meno} vyhral! Zostávajúce životy: {self.bojovnik2.zivot: .0f}.")
+            print(f"{bojovnik2.__class__.__name__} {self.bojovnik2.meno} vyhral! Zostávajúce životy: {self.bojovnik2.zivot: .0f}.")
         else:
             print("Remíza, obidvaja bojovníci padli zároveň.")
 
-# Vytvorenie dvoch bojovníkov
-bojovnik1 = Bojovnik(meno=input("Zadajte meno 1. bojovníka: "))
-bojovnik2 = Bojovnik(meno=input("Zadajte meno 2. bojovníka: "))
-
-# Vytvorenie arény a simulace souboje
+# Vytvorenie arény a simulácia súboja
 arena = Arena(bojovnik1, bojovnik2)
-arena.simuluj_souboj()
+
+suboj = input("Začať súboj (stlačte Enter): ")
+
+if suboj == "":
+    arena.simuluj_souboj()
+else:
+    print("Neplatný vstup. Súboj ukončený.")
